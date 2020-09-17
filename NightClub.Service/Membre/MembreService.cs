@@ -136,12 +136,12 @@ namespace NightClub.Service.Membre
 
             var nouvelleCarteID = _context.IDCartes.SingleOrDefault(x => x.RegistreNational == requete.CarteIdentite.RegistreNational);
             if (nouvelleCarteID == null) throw new CustomNotFoundException("L'id carte n'existe pas");
-
+            var defaultDate = new DateTime();
             if (!String.IsNullOrEmpty(requete.CarteIdentite.Nom)) nouvelleCarteID.Nom = requete.CarteIdentite.Nom;
             if (!String.IsNullOrEmpty(requete.CarteIdentite.Prenom)) nouvelleCarteID.Prenom = requete.CarteIdentite.Prenom;
-            if (requete.CarteIdentite.DateNaissance != new DateTime()) nouvelleCarteID.DateNaissance = requete.CarteIdentite.DateNaissance;
-            if (requete.CarteIdentite.DateValidation != new DateTime()) nouvelleCarteID.DateValidation = requete.CarteIdentite.DateValidation;
-            if (requete.CarteIdentite.DateExpiration != new DateTime()) nouvelleCarteID.DateExpiration = requete.CarteIdentite.DateExpiration;
+            if (requete.CarteIdentite.DateNaissance != defaultDate) nouvelleCarteID.DateNaissance = requete.CarteIdentite.DateNaissance;
+            if (requete.CarteIdentite.DateValidation != defaultDate) nouvelleCarteID.DateValidation = requete.CarteIdentite.DateValidation;
+            if (requete.CarteIdentite.DateExpiration != defaultDate) nouvelleCarteID.DateExpiration = requete.CarteIdentite.DateExpiration;
             if (requete.CarteIdentite.NumeroCarte != default) nouvelleCarteID.NumeroCarte = requete.CarteIdentite.NumeroCarte;
 
             ValidationCarteIdentite(nouvelleCarteID);
