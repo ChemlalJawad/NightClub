@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200917101630_FirstMigration.cs" />
+    <Compile Remove="Migrations\20200917101630_FirstMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200917102301_AddIdCarteIntoMembre.cs" />
+    <Compile Remove="Migrations\20200917102301_AddIdCarteIntoMembre.Designer.cs" />
+    <Compile Remove="Migrations\20200917102822_AddIdCarteIntoMembre.cs" />
+    <Compile Remove="Migrations\20200917102822_AddIdCarteIntoMembre.Designer.cs" />
+    <Compile Remove="Migrations\20200917103703_EditBoolToDateTimeFinDateBlacklister.cs" />
+    <Compile Remove="Migrations\20200917103703_EditBoolToDateTimeFinDateBlacklister.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational.Design" Version="1.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NightClub.Core\NightClub.Core.csproj" />
+  </ItemGroup>
+
+</Project>

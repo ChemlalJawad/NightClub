@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NightClub.Core\NightClub.Core.csproj" />
+    <ProjectReference Include="..\NightClub.Data\NightClub.Data.csproj" />
+  </ItemGroup>
+
+</Project>
