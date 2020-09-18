@@ -80,11 +80,13 @@ namespace NightClub.Service.Membre
 
             if (!String.IsNullOrEmpty(requete.Telephone))
             {
-                string pattern = @"/^((\+|00)32\s?|0)4(60|[789]\d)(\s?\d{2}){3}$/";
+                string pattern = @"^0[0-9]{9}$";
                 var regexMatch = Regex.Match(requete.Telephone, pattern);
                 if (!regexMatch.Success) throw new CustomBadRequestException(MessageErreur.FormatTelephoneInvalide);
             }
-            
+            var idCarteExistant = _context.IDCartes.SingleOrDefault(x => x.RegistreNational == requete.CarteIdentite.RegistreNational);
+            if (idCarteExistant != null) throw new CustomNotFoundException(MessageErreur.RegistreNationalDejaExistant);
+
             var nouvelleIDCarte = new IDCarte
             {
                 Nom = requete.CarteIdentite.Nom,

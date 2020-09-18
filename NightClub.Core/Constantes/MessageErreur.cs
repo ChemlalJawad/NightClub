@@ -24,5 +24,6 @@ namespace NightClub.Core.Constantes
         public static string DateValidationInvalide => "La date de validation de votre carte d'identité doit etre inferieur à la date d'expiration.";
         public static string CarteIdentiteExpire => "Votre carte d'identité est expiré.";
         public static string AgeMinimumRequis => "Il faut avoir 18 ans minimum pour pouvoir s'enregistrer.";
+        public static string RegistreNationalDejaExistant => "Ce numéro de registre national est déjà dans le systeme.";
     }
 }
