@@ -182,9 +182,9 @@ namespace NightClub.Service.Membre
         {
             if (!String.IsNullOrEmpty(idCarte.RegistreNational))
             {
-                string NissPattern = @"^\d{3}.\d{2}.\d{2}-\d{3}-\d{2}$";
+                string NissPattern = @"^[0-9]{2}.[0-9]{2}.[0-9]{2}-[0-9]{3}.[0-9]{2}$";
                 var regexMatch = Regex.Match(idCarte.RegistreNational, NissPattern);
-                if (regexMatch.Success) throw new CustomBadRequestException(MessageErreur.FormatRegistreNationalInvalide);
+                if (!regexMatch.Success) throw new CustomBadRequestException(MessageErreur.FormatRegistreNationalInvalide);
             }
 
             if (String.IsNullOrEmpty(idCarte.Nom))
