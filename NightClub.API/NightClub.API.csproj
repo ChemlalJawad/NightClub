@@ -26,9 +26,5 @@
     <ProjectReference Include="..\NightClub.Service\NightClub.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-
 
 </Project>

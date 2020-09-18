@@ -15,7 +15,7 @@ namespace NightClub.Core.Domaines
         public DateTime DateExpiration { get; set; }
         public int NumeroCarte { get; set; }
 
-        public int GetAge(DateTime dateNaissance)
+        public int CalculerAge(DateTime dateNaissance)
         {
             return DateTime.Now.Year - dateNaissance.Year -
                    (DateTime.Now.Month <= dateNaissance.Month ?

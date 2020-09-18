@@ -20,13 +20,19 @@ namespace NightClub.API.Controllers
             _membreService = membreService;
         }
 
+        [HttpGet]
+        public ActionResult RecupererMembreBlacklister()
+        {
+            var membres = _membreService.RecupererMembreBlacklister();
+
+            return Ok(membres);
+        }
+
         [HttpPost]
         public ActionResult CreateMember([FromBody] CreerMembreRequete requete)
         {
             var membre = _membreService.CreerMembre(requete);
-
-            //var membreViewModel = _mapper.Map<GetMemberViewModel>(member);
-
+            
             return Ok(membre);
         }
 
@@ -36,8 +42,6 @@ namespace NightClub.API.Controllers
             requete.MembreId = membreId;
             var membre = _membreService.BlacklisterMembre(requete);
 
-            //var membreViewModel = _mapper.Map<GetMemberViewModel>(member);
-
             return Ok(membre);
         }
 
@@ -46,24 +50,16 @@ namespace NightClub.API.Controllers
         {
             requete.MembreId = membreId;
             var membre = _membreService.ModifierMembre(requete);
-
-            //var membreViewModel = _mapper.Map<GetMemberViewModel>(member);
-
+            
             return Ok(membre);
         }
         
         [HttpPost("{membreId}/nouvelleCarteMembre")]
         public ActionResult GenererNouvelleCarteMembre([FromRoute] int membreId)
-        {
-            
+        {         
             var membre = _membreService.GenerNouvelleCarteMembre(membreId);
-
-            //var membreViewModel = _mapper.Map<GetMemberViewModel>(member);
-
+            
             return Ok(membre);
         }
-
-
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NightClub.Core.Constantes;
 using NightClub.Core.Domaines;
 using NightClub.Core.Exceptions;
 using NightClub.Data.Database;
@@ -16,6 +17,7 @@ namespace NightClub.Service.Membre
     {
         private readonly NightclubContext _context;
         private const int AgeMinimum = 18;
+        private DateTime defaultDate = new DateTime();
         public MembreService(NightclubContext context)
         {
             _context = context;
@@ -25,27 +27,27 @@ namespace NightClub.Service.Membre
         {
             if (requete == null)
             {
-                throw new CustomBadRequestException("Requete est nulle");
+                throw new CustomBadRequestException(MessageErreur.RequeteNull);
             }
 
             if (DateTime.Compare(requete.DebutDateBlacklister, requete.FinDateBlacklister) > 0)
             {
-                throw new CustomBadRequestException("periode de bannissement invalide");
+                throw new CustomBadRequestException(MessageErreur.DateBlacklistingInvalide);
             }
 
             if (DateTime.Compare(requete.FinDateBlacklister, DateTime.Today) < 0)
             {
-                throw new CustomBadRequestException("La date de fin du blacklist doit etre superieur a la date d'ajd");
+                throw new CustomBadRequestException(MessageErreur.DateFinBlacklistInferieur);
             }
 
             var membreBlacklister = _context.Membres.SingleOrDefault(x => x.Id == requete.MembreId);
             if (membreBlacklister == null)
             {
-                throw new CustomNotFoundException("Le membre en question n'existe pas");
+                throw new CustomNotFoundException(MessageErreur.MembreIntrouvable);
             }
             if (membreBlacklister.IsBlacklister)
             {
-                throw new CustomBadRequestException("Le membre est deja blacklisté");
+                throw new CustomBadRequestException(MessageErreur.MembreDejaBlackliste);
             }
 
             membreBlacklister.IsBlacklister = true;
@@ -54,7 +56,6 @@ namespace NightClub.Service.Membre
 
             _context.Membres.Update(membreBlacklister);
             _context.SaveChanges();
-
             return membreBlacklister;
         }
 
@@ -62,26 +63,26 @@ namespace NightClub.Service.Membre
         {
             if (requete == null )
             {
-                throw new CustomBadRequestException("Requete est nulle");
+                throw new CustomBadRequestException(MessageErreur.RequeteNull);
             }
 
             if (String.IsNullOrEmpty(requete.Telephone) && String.IsNullOrEmpty(requete.Email))
             {
-                throw new CustomBadRequestException("Email et telephone non specifié");
+                throw new CustomBadRequestException(MessageErreur.EmailEtTelephoneNonInvalide);
             }
 
             if (!String.IsNullOrEmpty(requete.Email))
             {
                 string pattern = @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z";
                 var regexMatch = Regex.Match(requete.Email, pattern);
-                if (!regexMatch.Success) throw new CustomBadRequestException("email invalide");
+                if (!regexMatch.Success) throw new CustomBadRequestException(MessageErreur.FormatEmailInvalide);
             }
 
             if (!String.IsNullOrEmpty(requete.Telephone))
             {
                 string pattern = @"/^((\+|00)32\s?|0)4(60|[789]\d)(\s?\d{2}){3}$/";
                 var regexMatch = Regex.Match(requete.Telephone, pattern);
-                if (!regexMatch.Success) throw new CustomBadRequestException("Telephone invalide");
+                if (!regexMatch.Success) throw new CustomBadRequestException(MessageErreur.FormatTelephoneInvalide);
             }
             
             var nouvelleIDCarte = new IDCarte
@@ -122,21 +123,20 @@ namespace NightClub.Service.Membre
         {
             if (requete == null)
             {
-                throw new CustomBadRequestException("Requete est nulle");
+                throw new CustomBadRequestException(MessageErreur.RequeteNull);
             }
 
             var membre = _context.Membres
                 .Include(x => x.CarteIdentites)
                 .SingleOrDefault(x => x.Id == requete.MembreId);
-            if (membre == null) throw new CustomNotFoundException("membre existe pas ");
+            if (membre == null) throw new CustomNotFoundException(MessageErreur.MembreIntrouvable);
 
             if (!String.IsNullOrEmpty(requete.Email)) membre.Email = requete.Email;
             if (!String.IsNullOrEmpty(requete.Telephone)) membre.Telephone = requete.Telephone;
            
-
             var nouvelleCarteID = _context.IDCartes.SingleOrDefault(x => x.RegistreNational == requete.CarteIdentite.RegistreNational);
-            if (nouvelleCarteID == null) throw new CustomNotFoundException("L'id carte n'existe pas");
-            var defaultDate = new DateTime();
+            if (nouvelleCarteID == null) throw new CustomNotFoundException(MessageErreur.CarteIdentiteInvalide);
+            // Si un element non vide dans le body de la requete , on lui affecte une nouvelle valeur
             if (!String.IsNullOrEmpty(requete.CarteIdentite.Nom)) nouvelleCarteID.Nom = requete.CarteIdentite.Nom;
             if (!String.IsNullOrEmpty(requete.CarteIdentite.Prenom)) nouvelleCarteID.Prenom = requete.CarteIdentite.Prenom;
             if (requete.CarteIdentite.DateNaissance != defaultDate) nouvelleCarteID.DateNaissance = requete.CarteIdentite.DateNaissance;
@@ -157,7 +157,7 @@ namespace NightClub.Service.Membre
             var membre = _context.Membres
                 .Include(x => x.MembreCartes)
                 .SingleOrDefault(x => x.Id == membreId);
-            if (membre == null) throw new CustomNotFoundException("membre n'existe pas");
+            if (membre == null) throw new CustomNotFoundException(MessageErreur.MembreIntrouvable);
 
             foreach(var carteMembre in membre.MembreCartes)
             {
@@ -173,59 +173,67 @@ namespace NightClub.Service.Membre
                     Code = Guid.NewGuid().ToString(),
                     IsActive = true
                 });
+
             _context.SaveChanges();
             return membre;
         }
 
         private void ValidationCarteIdentite(IDCarte idCarte)
         {
-            if(!String.IsNullOrEmpty(idCarte.RegistreNational))
+            if (!String.IsNullOrEmpty(idCarte.RegistreNational))
             {
                 string NissPattern = @"^\d{3}.\d{2}.\d{2}-\d{3}-\d{2}$";
                 var regexMatch = Regex.Match(idCarte.RegistreNational, NissPattern);
-                if( regexMatch.Success) throw new CustomBadRequestException("Format Registre national invalide");
+                if (regexMatch.Success) throw new CustomBadRequestException(MessageErreur.FormatRegistreNationalInvalide);
             }
 
             if (String.IsNullOrEmpty(idCarte.Nom))
             {
-                throw new CustomBadRequestException("Nom invalide");
-            }
-
-            if (idCarte.DateNaissance == null)
-            {
-                throw new CustomBadRequestException("Date de naissance invalide");
-            }
-
-            if (idCarte.DateValidation == null)
-            {
-                throw new CustomBadRequestException("Date de naissance invalide");
-            }
-
-            if (idCarte.DateExpiration == null)
-            {
-                throw new CustomBadRequestException("Date de naissance invalide");
+                throw new CustomBadRequestException(MessageErreur.NomNonReference);
             }
 
             if (String.IsNullOrEmpty(idCarte.Prenom))
             {
-                throw new CustomBadRequestException("Prenom invalide");
+                throw new CustomBadRequestException(MessageErreur.PrenomNonReference);
+            }
+
+            if (idCarte.DateNaissance == defaultDate)
+            {
+                throw new CustomBadRequestException(MessageErreur.DateNaissanceNonReference);
+            }
+
+            if (idCarte.DateValidation == defaultDate)
+            {
+                throw new CustomBadRequestException(MessageErreur.DateValidationeNonReference);
+            }
+
+            if (idCarte.DateExpiration == defaultDate)
+            {
+                throw new CustomBadRequestException(MessageErreur.DateExpirationNonReference);
             }
 
             if (DateTime.Compare(idCarte.DateExpiration, idCarte.DateValidation) < 0)
             {
-                throw new CustomBadRequestException("Date de validation ne peut pas etre superieur a date d expiration");
+                throw new CustomBadRequestException(MessageErreur.DateValidationInvalide);
             }
 
             if (DateTime.Compare(idCarte.DateExpiration, DateTime.Today) < 0)
             {
-                throw new CustomBadRequestException("Date de la carte identité expiré");
+                throw new CustomBadRequestException(MessageErreur.CarteIdentiteExpire);
             }
 
-            if (idCarte.GetAge(idCarte.DateNaissance) < AgeMinimum)
+            if (idCarte.CalculerAge(idCarte.DateNaissance) < AgeMinimum)
             {
-                throw new CustomBadRequestException("Pas 18 ans");
+                throw new CustomBadRequestException(MessageErreur.AgeMinimumRequis);
             }
         }
 
+        public List<Core.Domaines.Membre> RecupererMembreBlacklister()
+        {
+            var blacklistMembres = _context.Membres.ToList();
+            blacklistMembres = blacklistMembres.Where(x => x.IsBlacklister).ToList();
+
+            return blacklistMembres;
+        }
     }
 }

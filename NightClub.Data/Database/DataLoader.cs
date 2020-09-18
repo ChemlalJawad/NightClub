@@ -22,10 +22,10 @@ namespace NightClub.Data.Database
             modelBuilder.Entity<IDCarte>().HasData(new
             {
                 Id = 1,
-                Nom = "Jawad",
-                Prenom = "Jawadoux",
+                Nom = "Chemlal",
+                Prenom = "Jawad",
                 DateNaissance = new DateTime(1995, 7, 29),
-                RegistreNational = "137174",
+                RegistreNational = "96.07.17-146-23",
                 DateValidation = new DateTime(2017,1,1),
                 DateExpiration = new DateTime(2030,1,1),
                 NumeroCarte = 1000001,
@@ -35,7 +35,7 @@ namespace NightClub.Data.Database
             modelBuilder.Entity<MembreCarte>().HasData(new
             {
                 Id = 1,
-                Code = "2535",
+                Code = "25352525",
                 MembreId = 1,
                 IsActive = true
             });

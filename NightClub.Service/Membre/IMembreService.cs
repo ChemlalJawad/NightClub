@@ -12,6 +12,6 @@ namespace NightClub.Service.Membre
         Core.Domaines.Membre BlacklisterMembre(BlacklisterMembreRequete requete);
         Core.Domaines.Membre ModifierMembre(ModifierMembreRequete requete);
         Core.Domaines.Membre GenerNouvelleCarteMembre(int membreId);
-
+        List<Core.Domaines.Membre> RecupererMembreBlacklister();
     }
 }

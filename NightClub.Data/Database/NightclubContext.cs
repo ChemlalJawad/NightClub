@@ -38,7 +38,6 @@ namespace NightClub.Data.Database
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             modelBuilder.Seed();
-
         }
     }
 }
