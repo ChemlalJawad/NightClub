@@ -376,7 +376,6 @@ namespace NightClub.Test
                 .WithMessage(MessageErreur.DateBlacklistingInvalide);
         }
 
-
         [Fact]
         public void BlacklisterMembre_DateDFinBlacklistInferieurDateDuJourException()
         {
@@ -487,6 +486,5 @@ namespace NightClub.Test
                .Should()
                .Be(new DateTime(2021, 7, 29));
         }
-
     }
 }
