@@ -86,6 +86,7 @@ namespace NightClub.Test
         public void CreerMembre_IDCarteRegistreNationalException()
         {
             // Arrange
+            var context = InitializeContext();
             var idCarte = new CreerMembreRequete.IDCarte 
             { 
                 Nom = "Test",
@@ -102,6 +103,7 @@ namespace NightClub.Test
                 Email = "chafik@hotmail.com", 
                 CarteIdentite =  idCarte  
             };
+            InjectClassFor(context);
 
             // Act
             Action action = () => ClassUnderTest.CreerMembre(requete);
@@ -117,6 +119,7 @@ namespace NightClub.Test
         public void CreerMembre_DateNaissanceNonReferenceException()
         {
             // Arrange
+            var context = InitializeContext();
             var idCarte = new CreerMembreRequete.IDCarte
             {
                 Nom = "Test",
@@ -132,6 +135,7 @@ namespace NightClub.Test
                 Email = "chafik@hotmail.com",
                 CarteIdentite = idCarte
             };
+            InjectClassFor(context);
 
             // Act
             Action action = () => ClassUnderTest.CreerMembre(requete);
@@ -147,6 +151,7 @@ namespace NightClub.Test
         public void CreerMembre_DateValidationNonReferenceException()
         {
             // Arrange
+            var context = InitializeContext();
             var idCarte = new CreerMembreRequete.IDCarte
             {
                 Nom = "Test",
@@ -162,6 +167,7 @@ namespace NightClub.Test
                 Email = "chafik@hotmail.com",
                 CarteIdentite = idCarte
             };
+            InjectClassFor(context);
 
             // Act
             Action action = () => ClassUnderTest.CreerMembre(requete);
@@ -177,6 +183,7 @@ namespace NightClub.Test
         public void CreerMembre_DateExpirationNonReferenceException()
         {
             // Arrange
+            var context = InitializeContext();
             var idCarte = new CreerMembreRequete.IDCarte
             {
                 Nom = "Test",
@@ -192,6 +199,7 @@ namespace NightClub.Test
                 Email = "chafik@hotmail.com",
                 CarteIdentite = idCarte
             };
+            InjectClassFor(context);
 
             // Act
             Action action = () => ClassUnderTest.CreerMembre(requete);
@@ -207,6 +215,7 @@ namespace NightClub.Test
         public void CreerMembre_DateValidationSuperieurDateExpirationException()
         {
             // Arrange
+            var context = InitializeContext();
             var idCarte = new CreerMembreRequete.IDCarte
             {
                 Nom = "Test",
@@ -223,6 +232,7 @@ namespace NightClub.Test
                 Email = "test@hotmail.com",
                 CarteIdentite = idCarte
             };
+            InjectClassFor(context);
 
             // Act
             Action action = () => ClassUnderTest.CreerMembre(requete);
@@ -238,6 +248,7 @@ namespace NightClub.Test
         public void CreerMembre_CarteIdentiteExpireException()
         {
             // Arrange
+            var context = InitializeContext();
             var idCarte = new CreerMembreRequete.IDCarte
             {
                 Nom = "Test",
@@ -254,6 +265,7 @@ namespace NightClub.Test
                 Email = "test@hotmail.com",
                 CarteIdentite = idCarte
             };
+            InjectClassFor(context);
 
             // Act
             Action action = () => ClassUnderTest.CreerMembre(requete);
@@ -269,6 +281,7 @@ namespace NightClub.Test
         public void CreerMembre_AgeMinimumException()
         {
             // Arrange
+            var context = InitializeContext();
             var idCarte = new CreerMembreRequete.IDCarte
             {
                 Nom = "Test",
@@ -285,6 +298,7 @@ namespace NightClub.Test
                 Email = "test@hotmail.com",
                 CarteIdentite = idCarte
             };
+            InjectClassFor(context);
 
             // Act
             Action action = () => ClassUnderTest.CreerMembre(requete);
@@ -318,6 +332,7 @@ namespace NightClub.Test
                 CarteIdentite = idCarte
             };
             InjectClassFor(context);
+
             // Act
             var result = ClassUnderTest.CreerMembre(requete);
 
@@ -334,6 +349,144 @@ namespace NightClub.Test
                 .Be("95.07.19-111.26");
         }
 
+        [Fact]
+        public void BlacklisterMembre_DateDebutBlacklistInferieurDateFinBlacklistException()
+        {
+            // Arrange
+            var context = InitializeContext();
+            var membre = fixture.Build<Membre>().With(x => x.Id, 15).With(x => x.IsBlacklister, false).Create();
+            var requete = new BlacklisterMembreRequete
+            {
+                MembreId = 15,
+                DebutDateBlacklister = new DateTime(2030, 10, 22),
+                FinDateBlacklister = new DateTime(2030, 7, 29)
+             
+            };
+            context.Membres.Add(membre);
+            InjectClassFor(context);
+
+            // Act
+            Action action = () => 
+            ClassUnderTest.BlacklisterMembre(requete);
+
+            // Assert
+            action
+                .Should()
+                .ThrowExactly<CustomBadRequestException>()
+                .WithMessage(MessageErreur.DateBlacklistingInvalide);
+        }
+
+
+        [Fact]
+        public void BlacklisterMembre_DateDFinBlacklistInferieurDateDuJourException()
+        {
+            // Arrange
+            var context = InitializeContext();
+            var membre = fixture.Build<Membre>().With(x => x.Id, 10).With(x => x.IsBlacklister, false).Create();
+            var requete = new BlacklisterMembreRequete
+            {
+                MembreId = 10,
+                DebutDateBlacklister = new DateTime(2019, 01, 22),
+                FinDateBlacklister = new DateTime(2020, 7, 29)
+
+            };
+            context.Membres.Add(membre);
+            InjectClassFor(context);
+
+            // Act
+            Action action = () => ClassUnderTest.BlacklisterMembre(requete);
+
+            // Assert
+            action
+                .Should()
+                .ThrowExactly<CustomBadRequestException>()
+                .WithMessage(MessageErreur.DateFinBlacklistInferieur);
+        }
+        [Fact]
+        public void BlacklisterMembre_MembreInexistantException()
+        {
+            // Arrange
+            var context = InitializeContext();
+            var requete = new BlacklisterMembreRequete
+            {
+                MembreId = 1,
+                DebutDateBlacklister = new DateTime(2020, 10, 22),
+                FinDateBlacklister = new DateTime(2021, 7, 29)
+
+            };
+            InjectClassFor(context);
+
+            // Act
+            Action action = () => ClassUnderTest.BlacklisterMembre(requete);
+
+            // Assert
+            action
+                .Should()
+                .ThrowExactly<CustomNotFoundException>()
+                .WithMessage(MessageErreur.MembreIntrouvable);
+        }
+
+        // En debug --> donne le bon resultat 
+        [Fact]
+        public void BlacklisterMembre_DejaBlacklisterException()
+        {
+            // Arrange
+            var context = InitializeContext();
+            var membre = fixture.Build<Membre>().With(x => x.Id, 1).With(x => x.IsBlacklister, true).Create();
+            var requete = new BlacklisterMembreRequete
+            {
+                MembreId = 1,
+                DebutDateBlacklister = new DateTime(2020, 10, 22),
+                FinDateBlacklister = new DateTime(2021, 7, 29)
+
+            };
+            context.Membres.Add(membre);
+            context.SaveChanges();
+            InjectClassFor(context);
+
+            // Act
+            Action action = () => ClassUnderTest.BlacklisterMembre(requete);
+
+            // Assert
+            action
+                .Should()
+                .ThrowExactly<CustomBadRequestException>()
+                .WithMessage(MessageErreur.MembreDejaBlackliste);
+        }
+
+        [Fact]
+        public void BlacklisterMembre_Success()
+        {
+            // Arrange
+            var context = InitializeContext();
+            var membre = fixture.Build<Membre>().With(x => x.Id, 3).With(x => x.IsBlacklister, false).Create();
+            var requete = new BlacklisterMembreRequete
+            {
+                MembreId = 3,
+                DebutDateBlacklister = new DateTime(2020, 10, 22),
+                FinDateBlacklister = new DateTime(2021, 7, 29)
+
+            };
+            context.Membres.Add(membre);
+            context.SaveChanges();
+            InjectClassFor(context);
+
+            // Act
+            var result = ClassUnderTest.BlacklisterMembre(requete);
+
+            // Assert
+            result.Id
+                .Should()
+                .Be(3);
+
+            result.IsBlacklister
+                .Should()
+                .Be(true);
+
+            result.FinDateBlacklister
+               .Should()
+               .Be(new DateTime(2021, 7, 29));
+        }
 
     }
 }

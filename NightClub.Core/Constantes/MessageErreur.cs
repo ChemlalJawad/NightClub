@@ -6,7 +6,7 @@ namespace NightClub.Core.Constantes
 {
     public class MessageErreur
     {
-        public static string RequeteNull => "L'intitulé du poste interne doit être renseigné";
+        public static string RequeteNull => "La requete est vide";
         public static string DateBlacklistingInvalide => "La date de debut du blacklisting doit etre inférieur à la date de fin.";
         public static string DateFinBlacklistInferieur => "La date de fin du black listing doit etre superieur à la date d'aujourd'hui.";
         public static string MembreIntrouvable => "Le membre n'existe pas.";
